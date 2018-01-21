@@ -24,7 +24,7 @@ var Game = function() {
     );
 
     game.world.setBounds(0, 0, game.width, game.height - 16 * 5);
-    game.stage.disableVisibilityChange = true;
+    //game.stage.disableVisibilityChange = true;
 
   }
 
@@ -46,13 +46,31 @@ var Game = function() {
     map = game.add.tilemap(name);
     map.addTilesetImage("16x16_Jerom_CC-BY-SA-3.0", "gamesprite");
     var layer1 = map.createLayer("floor");
-    var layer2 = map.createLayer("collision");
+    layer1.resizeWorld();
+    map.setCollision(250, true, 'collision');
+    game.physics.p2.convertTilemap(map, "collision");
+
+    if (map.objects.object) {
+      const objs = map.objects.object;
+      objs.forEach(obj => {
+        var ball = game.add.sprite( obj.x, obj.y, "gamesprite");
+        game.physics.p2.enable(ball);
+        ball.frame = obj.gid - 1;
+        ball.body.setRectangle(obj.width, obj.height);
+        ball.body.fixedRotation = true;
+        ball.anchor.set(0.5);
+        ball.smoothed = false;
+        ball.body.collideWorldBounds = true;
+        ball.body.applyDamping(0.9);
+        ball.body.debug = true;
+        ball.body.setZeroDamping(); 
+      });
+    }
   }
 
-  function create() {
-    makeRoom("room1");
-
+  function create() { 
     game.physics.startSystem(Phaser.Physics.P2JS);
+    makeRoom("room1");
 
     game.physics.p2.restitution = 0.7;
     game.physics.p2.applyDamping = true;
@@ -65,8 +83,8 @@ var Game = function() {
 
     for (var i = 0; i < 1; i++) {
       var ball = balls.create(
-        10 + 1,
-        10 + i * 16 + 1,
+        20 + 1,
+        20 + i * 16 + 1,
         "gamesprite"
       );
       ball.frame = 10 * 21;
@@ -94,7 +112,7 @@ var Game = function() {
     game.physics.p2.enable(ship);
 
     //ship.body.setCircle(16);
-    ship.body.setRectangle(16, 16);
+//    ship.body.setRectangle(16, 16);
     ship.body.fixedRotation = true;
     ship.body.collideWorldBounds = true;
 
