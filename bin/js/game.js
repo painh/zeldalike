@@ -53,19 +53,43 @@ var Game = function() {
     if (map.objects.object) {
       const objs = map.objects.object;
       objs.forEach(obj => {
-        var ball = game.add.sprite( obj.x, obj.y, "gamesprite");
-        game.physics.p2.enable(ball);
-        ball.frame = obj.gid - 1;
-        ball.body.setRectangle(obj.width, obj.height);
-        ball.body.fixedRotation = true;
-        ball.anchor.set(0.5);
-        ball.smoothed = false;
-        ball.body.collideWorldBounds = true;
-        ball.body.applyDamping(0.9);
-        ball.body.debug = true;
-        ball.body.setZeroDamping(); 
+        createObj(obj);
       });
     }
+  }
+
+  function createObj(obj)
+  {
+    if(obj.type == 'player')
+    {
+      ship = game.add.sprite(
+        obj.x, obj.y,
+        "gamesprite"
+      );
+      ship.frame = obj.gid - 1;
+      ship.anchor.set(0.5);
+      ship.smoothed = false;
+
+      game.physics.p2.enable(ship);
+
+      ship.body.fixedRotation = true;
+      ship.body.collideWorldBounds = true;
+      return ship; 
+    }
+
+    var mapObj = game.add.sprite( obj.x, obj.y, "gamesprite");
+    game.physics.p2.enable(mapObj);
+    mapObj.frame = obj.gid - 1;
+    mapObj.body.setRectangle(obj.width, obj.height);
+    mapObj.body.fixedRotation = true;
+    mapObj.anchor.set(0.5);
+    mapObj.smoothed = false;
+    mapObj.body.collideWorldBounds = true;
+    mapObj.body.applyDamping(0.9);
+    mapObj.body.debug = true;
+    mapObj.body.setZeroDamping(); 
+    return mapObj;
+
   }
 
   function create() { 
@@ -74,57 +98,7 @@ var Game = function() {
 
     game.physics.p2.restitution = 0.7;
     game.physics.p2.applyDamping = true;
-    // game.physics.p2.applyGravity = false;
-    // game.physics.p2.applySpringForces = false;
     game.physics.p2.gravity = 0;
-
-    //  Some balls to collide with
-    balls = game.add.physicsGroup(Phaser.Physics.P2JS);
-
-    for (var i = 0; i < 1; i++) {
-      var ball = balls.create(
-        20 + 1,
-        20 + i * 16 + 1,
-        "gamesprite"
-      );
-      ball.frame = 10 * 21;
-      ball.body.setRectangle(16, 16);
-      ball.body.fixedRotation = true;
-      ball.anchor.set(0.5);
-      ball.smoothed = false;
-      ball.body.collideWorldBounds = true;
-      ball.body.applyDamping(0.9);
-      ball.body.debug = true;
-      ball.body.setZeroDamping();
-      //ball.body.static = true;
-    }
-
-    ship = game.add.sprite(
-      game.world.randomX,
-      game.world.randomY,
-      "gamesprite"
-    );
-    ship.frame = 10 * 19;
-    ship.anchor.set(0.5);
-    ship.smoothed = false;
-
-    //  Create our physics body. A circle assigned the playerCollisionGroup
-    game.physics.p2.enable(ship);
-
-    //ship.body.setCircle(16);
-//    ship.body.setRectangle(16, 16);
-    ship.body.fixedRotation = true;
-    ship.body.collideWorldBounds = true;
-
-    //  Create a new custom sized bounds, within the world bounds
-    customBounds = { left: null, right: null, top: null, bottom: null };
-
-    //    createPreviewBounds(bounds.x, bounds.y, bounds.width, bounds.height);
-
-    //  Just to display the bounds
-    // var graphics = game.add.graphics(bounds.x, bounds.y);
-    // graphics.lineStyle(4, 0xffd900, 1);
-    // graphics.drawRect(0, 0, bounds.width, bounds.height);
 
     cursors = game.input.keyboard.createCursorKeys();
   }
