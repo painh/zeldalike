@@ -89,6 +89,7 @@ var Game = function() {
     game.touchControl = game.plugins.add(Phaser.Plugin.TouchControl);
     game.touchControl.inputEnable();
     game.touchControl.settings.maxDistanceInPixels = 32;
+    game.touchControl.setPos(50, 200);
 
     game.physics.startSystem(Phaser.Physics.P2JS);
     makeRoom("room1");

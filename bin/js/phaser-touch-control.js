@@ -49,7 +49,7 @@
 
 		this.imageGroup.forEach(function (e) {
 			e.anchor.set(0.5);
-			e.visible=false;
+			e.visible=true;
 			e.fixedToCamera=true;
 		});
 	};
@@ -64,6 +64,19 @@
 		singleDirection: false,
 		pos : new Phaser.Point(50, 200)
 	};
+
+	Phaser.Plugin.TouchControl.prototype.setPos = function(x, y)
+	{
+		this.settings.pos = new Phaser.Point(x, y);
+		this.imageGroup.forEach(function (e) {
+			e.x = x;
+			e.y = y;
+			e.bringToTop();
+
+			e.cameraOffset.x=x;
+			e.cameraOffset.y=y;
+		});
+	}
 
 
 	Phaser.Plugin.TouchControl.prototype.cursors = {
@@ -86,7 +99,7 @@
 
 	var initialPoint;
 	var createCompass = function(){
-		if(this.settings.pos.distance(this.input.activePointer.position) > this.settings.maxDistanceInPixels )
+		if(this.settings.pos.distance(this.input.activePointer.position) > this.settings.maxDistanceInPixels)
 			return;
 
 		this.imageGroup.forEach(function (e) {
@@ -105,8 +118,15 @@
 
 	};
 	var removeCompass = function () {
+		var self = this;
 		this.imageGroup.forEach(function(e){
-			e.visible = false;
+				e.x = self.settings.pos.x;
+				e.y = self.settings.pos.y;
+				e.bringToTop();
+
+				e.cameraOffset.x=self.settings.pos.x;
+				e.cameraOffset.y=self.settings.pos.y;
+			//e.visible = false;
 		});
 
 		this.cursors.up = false;
