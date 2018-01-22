@@ -25,7 +25,6 @@ var Game = function() {
 
     game.world.setBounds(0, 0, game.width, game.height - 16 * 5);
     //game.stage.disableVisibilityChange = true;
-
   }
 
   function init() {
@@ -36,7 +35,7 @@ var Game = function() {
 
   var ship;
   var cursors;
-  var customBounds;
+  var pad1;
 
   var map;
 
@@ -47,7 +46,7 @@ var Game = function() {
     map.addTilesetImage("16x16_Jerom_CC-BY-SA-3.0", "gamesprite");
     var layer1 = map.createLayer("floor");
     layer1.resizeWorld();
-    map.setCollision(250, true, 'collision');
+    map.setCollision(250, true, "collision");
     game.physics.p2.convertTilemap(map, "collision");
 
     if (map.objects.object) {
@@ -58,26 +57,21 @@ var Game = function() {
     }
   }
 
-  function createObj(obj)
-  {
-    if(obj.type == 'player')
-    {
-      ship = game.add.sprite(
-        obj.x, obj.y,
-        "gamesprite"
-      );
+  function createObj(obj) {
+    if (obj.type == "player") {
+      ship = game.add.sprite(obj.x, obj.y, "gamesprite");
       ship.frame = obj.gid - 1;
       ship.anchor.set(0.5);
       ship.smoothed = false;
 
       game.physics.p2.enable(ship);
 
-      ship.body.fixedRotation = true;
+      //ship.body.fixedRotation = true;
       ship.body.collideWorldBounds = true;
-      return ship; 
+      return ship;
     }
 
-    var mapObj = game.add.sprite( obj.x, obj.y, "gamesprite");
+    var mapObj = game.add.sprite(obj.x, obj.y, "gamesprite");
     game.physics.p2.enable(mapObj);
     mapObj.frame = obj.gid - 1;
     mapObj.body.setRectangle(obj.width, obj.height);
@@ -87,12 +81,15 @@ var Game = function() {
     mapObj.body.collideWorldBounds = true;
     mapObj.body.applyDamping(0.9);
     mapObj.body.debug = true;
-    mapObj.body.setZeroDamping(); 
+    mapObj.body.setZeroDamping();
     return mapObj;
-
   }
 
-  function create() { 
+  function create() {
+    game.touchControl = game.plugins.add(Phaser.Plugin.TouchControl);
+    game.touchControl.inputEnable();
+    game.touchControl.settings.maxDistanceInPixels = 32;
+
     game.physics.startSystem(Phaser.Physics.P2JS);
     makeRoom("room1");
 
@@ -100,12 +97,50 @@ var Game = function() {
     game.physics.p2.applyDamping = true;
     game.physics.p2.gravity = 0;
 
+    game.input.gamepad.start();
+    pad1 = game.input.gamepad.pad1;
+    console.log(pad1);
+
     cursors = game.input.keyboard.createCursorKeys();
   }
 
   function update() {
     ship.body.setZeroVelocity();
     var playerSpeed = 64;
+
+    if (pad1.connected) {
+      var leftStickX = pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X);
+      var leftStickY = pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y);
+
+      if (leftStickX) {
+        ship.body.moveRight(leftStickX * playerSpeed);
+        ship.body.angle =
+          360 - Math.atan2(leftStickX, leftStickY) * 180 / Math.PI;
+      }
+
+      if (leftStickY) {
+        ship.body.moveDown(leftStickY * playerSpeed);
+        ship.body.angle =
+          360 - Math.atan2(leftStickX, leftStickY) * 180 / Math.PI;
+      }
+
+      //ship.body.angle += 10;
+
+      //      console.log(Math.atan2(leftStickX, leftStickY) * 180 / Math.PI);
+    }
+
+    var speed = this.game.touchControl.speed;
+    if (speed.y) {
+      ship.body.moveUp(speed.y);
+      ship.body.angle =
+        180 - Math.atan2(speed.x, speed.y) * 180 / Math.PI;
+    }
+    if (speed.x)
+    {
+      ship.body.moveLeft(speed.x);
+      ship.body.angle =
+        180 - Math.atan2(speed.x, speed.y) * 180 / Math.PI;
+    }
 
     if (cursors.left.isDown) {
       ship.body.moveLeft(playerSpeed);
