@@ -61,7 +61,8 @@
 	Phaser.Plugin.TouchControl.prototype.settings = {
 		// max distance from itial touch
 		maxDistanceInPixels: 200,
-		singleDirection: false
+		singleDirection: false,
+		pos : new Phaser.Point(50, 200)
 	};
 
 
@@ -85,6 +86,9 @@
 
 	var initialPoint;
 	var createCompass = function(){
+		if(this.settings.pos.distance(this.input.activePointer.position) > this.settings.maxDistanceInPixels )
+			return;
+
 		this.imageGroup.forEach(function (e) {
 			e.visible=true;
 			e.bringToTop();
@@ -96,7 +100,8 @@
 
 		this.preUpdate=setDirection.bind(this);
 
-		initialPoint=this.input.activePointer.position.clone();
+		//initialPoint=this.input.activePointer.position.clone();
+		initialPoint = this.settings.pos.clone();
 
 	};
 	var removeCompass = function () {
