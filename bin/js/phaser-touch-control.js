@@ -190,7 +190,7 @@
       e.cameraOffset.y = initialPoint.y + deltaY * i / 3;
     }, this);
 
-    this.prevPos = this.input.activePointer.position.clone();
+    this.prevPos = new Phaser.Point(this.speed.x, this.speed.y);
   };
   Phaser.Plugin.TouchControl.prototype.preUpdate = empty;
 })(window, Phaser);
