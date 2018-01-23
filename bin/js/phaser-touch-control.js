@@ -124,6 +124,12 @@
     this.prevPos = this.settings.pos.clone();
   };
   var removeCompass = function() {
+    if (
+      this.settings.pos.distance(this.input.activePointer.position) >
+      this.settings.maxDistanceInPixels
+    )
+      return;
+
     var self = this;
     this.imageGroup.forEach(function(e) {
       e.x = self.settings.pos.x;
