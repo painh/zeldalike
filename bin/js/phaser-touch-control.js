@@ -40,6 +40,8 @@
     Phaser.Plugin.call(this, game, parent);
     this.input = this.game.input;
 
+    this.prevPos = new Phaser.Point(0,0);
+
     this.imageGroup = [];
 
     this.imageGroup.push(this.game.add.sprite(0, 0, "compass"));
@@ -119,6 +121,7 @@
 
     //initialPoint=this.input.activePointer.position.clone();
     initialPoint = this.settings.pos.clone();
+    this.prevPos = this.settings.pos.clone();
   };
   var removeCompass = function() {
     var self = this;
@@ -150,7 +153,7 @@
 	var maxDistanceInPixels = this.settings.maxDistanceInPixels;
 	
 	if (d > maxDistanceInPixels) {
-		return;
+		this.input.activePointer.position = this.prevPos;
 	}	
 
     var deltaX = this.input.activePointer.position.x - initialPoint.x;
