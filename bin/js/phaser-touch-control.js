@@ -40,7 +40,7 @@
     Phaser.Plugin.call(this, game, parent);
     this.input = this.game.input;
 
-    this.prevPos = new Phaser.Point(0,0);
+    this.prevPos = new Phaser.Point(0, 0);
 
     this.imageGroup = [];
 
@@ -150,11 +150,11 @@
 
   var setDirection = function() {
     var d = initialPoint.distance(this.input.activePointer.position);
-	var maxDistanceInPixels = this.settings.maxDistanceInPixels;
-	
-	if (d > maxDistanceInPixels) {
-		this.input.activePointer.position = this.prevPos;
-	}	
+    var maxDistanceInPixels = this.settings.maxDistanceInPixels;
+
+    if (d > maxDistanceInPixels) {
+      this.input.activePointer.position = this.prevPos;
+    }
 
     var deltaX = this.input.activePointer.position.x - initialPoint.x;
     var deltaY = this.input.activePointer.position.y - initialPoint.y;
@@ -187,6 +187,8 @@
       e.cameraOffset.x = initialPoint.x + deltaX * i / 3;
       e.cameraOffset.y = initialPoint.y + deltaY * i / 3;
     }, this);
+
+    this.prevPos = this.input.activePointer.position.clone();
   };
   Phaser.Plugin.TouchControl.prototype.preUpdate = empty;
 })(window, Phaser);
