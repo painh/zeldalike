@@ -153,7 +153,9 @@
     var maxDistanceInPixels = this.settings.maxDistanceInPixels;
 
     if (d > maxDistanceInPixels) {
-      this.input.activePointer.position = this.prevPos;
+      this.speed.x = this.prevPos.x;
+      this.speed.y = this.prevPos.y;
+      return;
     }
 
     var deltaX = this.input.activePointer.position.x - initialPoint.x;
